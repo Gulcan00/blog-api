@@ -1,4 +1,5 @@
 const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
+const passport = require('passport');
 const prisma = require('../utils/prisma-client');
 
 const options = {

@@ -3,10 +3,10 @@ const authController = require('../controllers/authController');
 const { authenticate } = require('../middleware/auth');
 
 // Public routes
-router.post('/register', authController.register);
-router.post('/login', authController.login);
+authRouter.post('/register', authController.register);
+authRouter.post('/login', authController.login);
 
 // Protected routes
-router.get('/me', authenticate, authController.getCurrentUser);
+authRouter.get('/me', authenticate, authController.getCurrentUser);
 
 module.exports = authRouter;
