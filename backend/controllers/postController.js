@@ -1,7 +1,16 @@
 const prisma = require('../utils/prisma-client');
 
-const getAllPosts = async (req, res) => {
+const getAllPublishedPosts = async (req, res) => {
     const posts = await prisma.post.findMany({
+        where: { published: true },
+        include: { author: true },
+    });
+    res.status(200).json(posts);
+};
+
+const getAllPostsByAuthor = async (req, res) => {
+    const posts = await prisma.post.findMany({
+        where: { authorId: req.user.id },
         include: { author: true },
     });
     res.status(200).json(posts);
@@ -67,10 +76,34 @@ const deletePost = async (req, res) => {
     res.status(204).send();
 };
 
+const togglePublishPost = async (req, res) => {
+    const { id } = req.params;
+    const post = await prisma.post.findUnique({
+        where: { id: parseInt(id) },
+    });
+
+    if (!post) {
+        return res.status(404).json({ error: "Post not found" });
+    }
+
+    if (post.authorId !== req.user.id) {
+        return res.status(403).json({ error: "You can only publish/unpublish your own posts" });
+    }
+
+    const updatedPost = await prisma.post.update({
+        where: { id: parseInt(id) },
+        data: { published: !post.published },
+    });
+
+    res.status(200).json(updatedPost);
+};
+
 module.exports = {
-    getAllPosts,
+    getAllPublishedPosts,
+    getAllPostsByAuthor,
     getPostById,
     createPost,
     updatePost,
     deletePost,
+    togglePublishPost
 };
