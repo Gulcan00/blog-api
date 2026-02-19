@@ -13,6 +13,7 @@ app.use(passport.initialize());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/posts', authenticate, require('./routes/posts'));
+app.use('/api/comments', authenticate, require('./routes/comments'));
 
 app.use(errorHandler);
 
